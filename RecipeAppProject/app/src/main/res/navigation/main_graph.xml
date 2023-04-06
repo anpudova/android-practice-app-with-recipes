@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_graph">
+    android:id="@+id/main_graph"
+    app:startDestination="@id/recipeSearchFragment">
 
+    <fragment
+        android:id="@+id/recipeSearchFragment"
+        android:name="com.example.recipeappproject.ui.screen.RecipeSearchFragment"
+        android:label="RecipeSearchFragment" >
+        <action
+            android:id="@+id/action_recipeSearchFragment_to_detailRecipeFragment"
+            app:destination="@id/detailRecipeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailRecipeFragment"
+        android:name="com.example.recipeappproject.ui.screen.DetailRecipeFragment"
+        android:label="DetailRecipeFragment" >
+        <action
+            android:id="@+id/action_detailRecipeFragment_to_recipeSearchFragment"
+            app:destination="@id/recipeSearchFragment" />
+    </fragment>
 </navigation>

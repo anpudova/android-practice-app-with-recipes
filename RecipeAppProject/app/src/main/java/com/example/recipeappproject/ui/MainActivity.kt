@@ -1,9 +1,10 @@
-package com.example.recipeappproject
+package com.example.recipeappproject.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.recipeappproject.R
 import com.example.recipeappproject.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
