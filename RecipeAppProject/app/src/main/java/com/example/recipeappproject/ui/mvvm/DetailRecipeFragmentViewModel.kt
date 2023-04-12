@@ -3,15 +3,18 @@ package com.example.recipeappproject.ui.mvvm
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.recipeappproject.di.ViewModelArgsKeys
+import com.example.recipeappproject.domain.usecase.GetDetailRecipeByIdUseCase
 import com.example.recipeappproject.domain.usecase.GetIngredientsByIdUseCase
 import com.example.recipeappproject.domain.usecase.GetRecipesByNameUseCase
+import com.example.recipeappproject.ui.model.DetailRecipeDataModel
 import com.example.recipeappproject.ui.model.IngredientsDataModel
 import com.example.recipeappproject.ui.model.RecipesDataModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class DetailRecipeFragmentViewModel (
-    private val getIngredientsUseCase: GetIngredientsByIdUseCase
+    private val getIngredientsUseCase: GetIngredientsByIdUseCase,
+    private val getDetailUseCase: GetDetailRecipeByIdUseCase
 ) : ViewModel() {
 
     private val _progressBarState: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -22,6 +25,9 @@ class DetailRecipeFragmentViewModel (
 
     private val _ingredientDataState: MutableLiveData<IngredientsDataModel?> = MutableLiveData(null)
     val ingredientDataState: LiveData<IngredientsDataModel?> = _ingredientDataState
+
+    private val _detailDataState: MutableLiveData<DetailRecipeDataModel?> = MutableLiveData(null)
+    val detailDataState: LiveData<DetailRecipeDataModel?> = _detailDataState
 
     private val _errorState: MutableLiveData<Throwable> = MutableLiveData(null)
     val errorState: LiveData<Throwable> = _errorState
@@ -44,6 +50,24 @@ class DetailRecipeFragmentViewModel (
         }
     }
 
+    fun requestDetailRecipeById(id: Long) {
+        viewModelScope.launch {
+            _progressBarState.value = true
+            _viewsState.value = false
+            delay(2000L)
+            runCatching {
+                getDetailUseCase(id)
+            }.onSuccess { dataModel ->
+                _progressBarState.value = false
+                _viewsState.value = true
+                _detailDataState.postValue(dataModel)
+            }.onFailure { ex ->
+                _progressBarState.value = false
+                _errorState.value = ex
+            }
+        }
+    }
+
     companion object {
 
         val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -52,7 +76,10 @@ class DetailRecipeFragmentViewModel (
                 val getIngredientsUseCase =
                     extras[ViewModelArgsKeys.getIngredientsByIdCaseKey]
                         ?: throw IllegalArgumentException()
-                return (DetailRecipeFragmentViewModel(getIngredientsUseCase) as? T)
+                val getDetailUseCase =
+                    extras[ViewModelArgsKeys.getDetailRecipeByIdCaseKey]
+                        ?: throw IllegalArgumentException()
+                return (DetailRecipeFragmentViewModel(getIngredientsUseCase, getDetailUseCase) as? T)
                     ?: throw java.lang.IllegalStateException()
             }
         }

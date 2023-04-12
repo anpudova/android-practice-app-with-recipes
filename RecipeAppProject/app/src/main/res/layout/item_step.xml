@@ -10,47 +10,32 @@
     android:background="@drawable/item_recipe_border">
 
     <RelativeLayout
-        android:id="@+id/llItemIngredient"
+        android:id="@+id/rlItemStep"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_margin="10dp">
 
         <TextView
-            android:id="@+id/tvNameIngredient"
+            android:id="@+id/tvNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_toStartOf="@+id/llValueUnit"
-            android:text="Name"
+            android:layout_marginEnd="10dp"
+            android:text="1"
             android:textSize="20sp" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/llValueUnit"
+        <TextView
+            android:id="@+id/tvStep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="5dp">
-
-            <TextView
-                android:id="@+id/tvValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:text="200"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/tvUnit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="g"
-                android:textSize="20sp" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/tvNumber"
+            android:text="Hhhhhhhh"
+            android:textSize="20sp" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

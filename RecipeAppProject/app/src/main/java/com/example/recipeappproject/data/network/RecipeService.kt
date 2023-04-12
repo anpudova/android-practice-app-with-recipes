@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RecipeService {
 
-    private const val APP_ID = "ba4b242d704c4412a2196c6c29f69183"
+    private const val APP_ID = "b4a87e7f376b4f5ea7633a46b84d5e8d"
     private const val BASE_URL = "https://api.spoonacular.com/"
 
     private val okHttpClient: OkHttpClient by lazy {
@@ -17,7 +17,6 @@ object RecipeService {
     private val retrofitInstance: RecipeApiService by lazy {
         createRetrofitInstance()
     }
-
 
     @JvmName("getOkHttpClient1")
     private fun getOkHttpClient(): OkHttpClient {

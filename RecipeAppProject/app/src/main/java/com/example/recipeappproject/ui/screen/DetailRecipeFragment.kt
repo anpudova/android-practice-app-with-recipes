@@ -18,9 +18,11 @@ import com.example.recipeappproject.databinding.FragmentRecipeSearchBinding
 import com.example.recipeappproject.di.DataDependency
 import com.example.recipeappproject.di.ViewModelArgsKeys
 import com.example.recipeappproject.ui.adapter.AllRecipesAdapter
+import com.example.recipeappproject.ui.adapter.DetailRecipeAdapter
 import com.example.recipeappproject.ui.adapter.IngredientsAdapter
 import com.example.recipeappproject.ui.model.IngredientModel
 import com.example.recipeappproject.ui.model.RecipeModel
+import com.example.recipeappproject.ui.model.StepModel
 import com.example.recipeappproject.ui.mvvm.DetailRecipeFragmentViewModel
 import com.example.recipeappproject.ui.mvvm.RecipeSearchFragmentViewModel
 import retrofit2.HttpException
@@ -30,13 +32,16 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
     private var _binding: FragmentDetailRecipeBinding? = null
     private val binding get() = _binding!!
     private var rvIngredientsAdapter: IngredientsAdapter? = null
+    private var rvDetailRecipeAdapter: DetailRecipeAdapter? = null
     private var listIngredients: ArrayList<IngredientModel> = arrayListOf()
+    private var listSteps: ArrayList<StepModel> = arrayListOf()
     private var idIng: Long? = null
     private var nameIng: String? = null
     private var imageIng: String? = null
     private val viewModel: DetailRecipeFragmentViewModel by viewModels(extrasProducer = {
         MutableCreationExtras().apply {
             set(ViewModelArgsKeys.getIngredientsByIdCaseKey, DataDependency.getIngredientsByIdUseCase)
+            set(ViewModelArgsKeys.getDetailRecipeByIdCaseKey, DataDependency.getDetailRecipeByIdUseCase)
         }
     }) {
         DetailRecipeFragmentViewModel.factory
@@ -50,7 +55,58 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
         idIng = arguments?.getLong("key-id-ingredient")
         nameIng = arguments?.getString("key-name-ingredient")
         imageIng = arguments?.getString("key-image-ingredient")
-        idIng?.let { observeData(it) }
+        idIng?.let {
+            viewModel.requestIngredientsById(it)
+            observeDataIngredients()
+            viewModel.requestDetailRecipeById(it)
+            observeDataDetails()
+        }
+    }
+
+    private fun observeDataDetails() {
+        viewModel.progressBarState.observe(viewLifecycleOwner) { isVisible ->
+            binding.progressBar.isVisible = isVisible
+        }
+        viewModel.viewsState.observe(viewLifecycleOwner) { isVisible ->
+            with(binding) {
+                scrollView.isVisible = isVisible
+            }
+        }
+        viewModel.detailDataState.observe(viewLifecycleOwner) { detailDataModel ->
+            detailDataModel?.let { data ->
+                with(binding) {
+                    listSteps.clear()
+                    val result = data.steps
+                    for (i in result.indices) {
+                        listSteps.add(
+                            StepModel(
+                                result[i].number,
+                                result[i].step
+                            )
+                        )
+                    }
+                    rvDetailRecipeAdapter = DetailRecipeAdapter().apply {
+                        items = listSteps
+                    }
+                    with(binding) {
+                        rvDetail.adapter = rvDetailRecipeAdapter
+                        rvDetail.layoutManager =
+                            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+                    }
+                }
+            }
+        }
+        viewModel.errorState.observe(viewLifecycleOwner) { ex ->
+            ex?.let {
+                val errorMessage = (ex as? HttpException)?.message ?: ex.toString()
+                Toast.makeText(
+                    requireContext(),
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.i("ERR", errorMessage)
+            }
+        }
     }
 
     private fun initViews() {
@@ -63,17 +119,13 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
         }
     }
 
-    private fun observeData(id: Long) {
-        viewModel.requestIngredientsById(id)
+    private fun observeDataIngredients() {
         viewModel.progressBarState.observe(viewLifecycleOwner) { isVisible ->
             binding.progressBar.isVisible = isVisible
         }
         viewModel.viewsState.observe(viewLifecycleOwner) { isVisible ->
             with(binding) {
-                tvNameRecipe.isVisible = isVisible
-                tvRecipe.isVisible = isVisible
-                tvIngredients.isVisible = isVisible
-                ivRecipe.isVisible = isVisible
+                scrollView.isVisible = isVisible
             }
         }
         viewModel.ingredientDataState.observe(viewLifecycleOwner) { ingredientDataModel ->
@@ -94,15 +146,14 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
                             )
                         )
                     }
-                }
-                if (listIngredients.isNullOrEmpty()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Not found ingredients :(",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    initAdapter()
+                    rvIngredientsAdapter = IngredientsAdapter().apply {
+                        items = listIngredients
+                    }
+                    with(binding) {
+                        rvIngredients.adapter = rvIngredientsAdapter
+                        rvIngredients.layoutManager =
+                            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+                    }
                 }
             }
         }
@@ -116,17 +167,6 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
                 ).show()
                 Log.i("ERR", errorMessage)
             }
-        }
-    }
-
-    private fun initAdapter() {
-        rvIngredientsAdapter = IngredientsAdapter().apply {
-            items = listIngredients
-        }
-        with(binding) {
-            rvRecipes.adapter = rvIngredientsAdapter
-            rvRecipes.layoutManager =
-                LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         }
     }
 

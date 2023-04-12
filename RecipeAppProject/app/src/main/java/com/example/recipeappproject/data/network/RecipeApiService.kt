@@ -1,5 +1,6 @@
 package com.example.recipeappproject.data.network
 
+import com.example.recipeappproject.data.model.DetailRecipeResponse
 import com.example.recipeappproject.data.model.IngredientResponse
 import com.example.recipeappproject.data.model.RecipeResponse
 import retrofit2.http.GET
@@ -17,5 +18,10 @@ interface RecipeApiService {
     suspend fun getIngredientsById(
         @Path("id") id: Long
     ): IngredientResponse
+
+    @GET("/recipes/{id}/analyzedInstructions?stepBreakdown=true")
+    suspend fun getDetailRecipeById(
+        @Path("id") id: Long
+    ): DetailRecipeResponse
 
 }
