@@ -12,27 +12,25 @@ class RecipeSearchFragmentViewModel (
     private val getRecipesUseCase: GetRecipesByNameUseCase
 ) : ViewModel() {
 
-    private val _progressBarState: MutableLiveData<Boolean> = MutableLiveData(false)
-    val progressBarState: LiveData<Boolean> = _progressBarState
-
-    private val _recipeDataState: MutableLiveData<RecipesDataModel?> = MutableLiveData(null)
-    val recipeDataState: LiveData<RecipesDataModel?> = _recipeDataState
-
-    private val _errorState: MutableLiveData<Throwable> = MutableLiveData(null)
-    val errorState: LiveData<Throwable> = _errorState
+    val progressBarState: MutableLiveData<Boolean> = MutableLiveData(false)
+    val recipeDataState: MutableLiveData<RecipesDataModel?> = MutableLiveData(null)
+    val errorState: MutableLiveData<Throwable> = MutableLiveData(null)
+    private var data_: MutableLiveData<RecipesDataModel> = MutableLiveData(null)
+    var data: LiveData<RecipesDataModel> = data_
 
     fun requestRecipesByName(name: String) {
         viewModelScope.launch {
-            _progressBarState.value = true
+            progressBarState.value = true
             delay(2000L)
             runCatching {
                 getRecipesUseCase(name)
             }.onSuccess { dataModel ->
-                _progressBarState.value = false
-                _recipeDataState.postValue(dataModel)
+                data_.value = dataModel
+                progressBarState.value = false
+                recipeDataState.postValue(dataModel)
             }.onFailure { ex ->
-                _progressBarState.value = false
-                _errorState.value = ex
+                progressBarState.value = false
+                errorState.value = ex
             }
         }
     }

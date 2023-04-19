@@ -7,8 +7,8 @@ data class RecipesEntity (
     val recipes: List<RecipeEntity>? = null
 ) {
     fun mapRecipeEntity(): RecipesDataModel {
-        var list = mutableListOf<RecipeModel>()
-        if (recipes != null) {
+        val list = mutableListOf<RecipeModel>()
+        recipes?.let { recipes ->
             for(i in recipes.indices) {
                 list.add(i,
                     RecipeModel(

@@ -9,17 +9,15 @@ import com.example.recipeappproject.domain.entity.IngredientsEntity
 class DetailRecipeResponseMapper {
 
     fun map(resp: DetailRecipeResponse?): DetailRecipeEntity {
-        var listStep = mutableListOf<DetailRecipeEntity.Step>()
+        val listStep = mutableListOf<DetailRecipeEntity.Step>()
         return resp?.let { response ->
             with(response) {
-                println("TAAAG " + get(0).steps?.get(0)?.step.toString())
-                if (get(0).steps != null) {
-                    var list = get(0).steps
-                    for (j in list!!.indices) {
+                get(0).steps?.let { steps ->
+                    for (i in steps.indices) {
                         listStep.add(
                             DetailRecipeEntity.Step(
-                                list[j].number!!,
-                                list[j].step.toString()
+                                steps[i].number!!,
+                                steps[i].step.toString()
                             )
                         )
                     }

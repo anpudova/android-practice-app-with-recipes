@@ -25,7 +25,6 @@
             android:id="@+id/ivRecipe"
             android:layout_width="wrap_content"
             android:layout_height="150dp"
-            app:srcCompat="@drawable/search_icon"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:scaleType="fitXY" />
@@ -35,7 +34,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Name"
             android:gravity="bottom"
             android:textSize="20sp"/>
 

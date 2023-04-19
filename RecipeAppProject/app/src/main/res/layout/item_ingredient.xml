@@ -23,7 +23,6 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:layout_toStartOf="@+id/llValueUnit"
-            android:text="Name"
             android:textSize="20sp" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -39,7 +38,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:text="200"
                 android:textSize="20sp" />
 
             <TextView
@@ -47,7 +45,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="g"
                 android:textSize="20sp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>

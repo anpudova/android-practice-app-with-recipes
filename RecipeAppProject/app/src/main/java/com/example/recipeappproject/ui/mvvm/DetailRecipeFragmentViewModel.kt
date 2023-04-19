@@ -17,53 +17,44 @@ class DetailRecipeFragmentViewModel (
     private val getDetailUseCase: GetDetailRecipeByIdUseCase
 ) : ViewModel() {
 
-    private val _progressBarState: MutableLiveData<Boolean> = MutableLiveData(false)
-    val progressBarState: LiveData<Boolean> = _progressBarState
-
-    private val _viewsState: MutableLiveData<Boolean> = MutableLiveData(false)
-    val viewsState: LiveData<Boolean> = _viewsState
-
-    private val _ingredientDataState: MutableLiveData<IngredientsDataModel?> = MutableLiveData(null)
-    val ingredientDataState: LiveData<IngredientsDataModel?> = _ingredientDataState
-
-    private val _detailDataState: MutableLiveData<DetailRecipeDataModel?> = MutableLiveData(null)
-    val detailDataState: LiveData<DetailRecipeDataModel?> = _detailDataState
-
-    private val _errorState: MutableLiveData<Throwable> = MutableLiveData(null)
-    val errorState: LiveData<Throwable> = _errorState
+    val progressBarState: MutableLiveData<Boolean> = MutableLiveData(false)
+    val viewsState: MutableLiveData<Boolean> = MutableLiveData(false)
+    val ingredientDataState: MutableLiveData<IngredientsDataModel?> = MutableLiveData(null)
+    val detailDataState: MutableLiveData<DetailRecipeDataModel?> = MutableLiveData(null)
+    val errorState: MutableLiveData<Throwable> = MutableLiveData(null)
 
     fun requestIngredientsById(id: Long) {
         viewModelScope.launch {
-            _progressBarState.value = true
-            _viewsState.value = false
+            progressBarState.value = true
+            viewsState.value = false
             delay(2000L)
             runCatching {
                 getIngredientsUseCase(id)
             }.onSuccess { dataModel ->
-                _progressBarState.value = false
-                _viewsState.value = true
-                _ingredientDataState.postValue(dataModel)
+                progressBarState.value = false
+                viewsState.value = true
+                ingredientDataState.postValue(dataModel)
             }.onFailure { ex ->
-                _progressBarState.value = false
-                _errorState.value = ex
+                progressBarState.value = false
+                errorState.value = ex
             }
         }
     }
 
     fun requestDetailRecipeById(id: Long) {
         viewModelScope.launch {
-            _progressBarState.value = true
-            _viewsState.value = false
+            progressBarState.value = true
+            viewsState.value = false
             delay(2000L)
             runCatching {
                 getDetailUseCase(id)
             }.onSuccess { dataModel ->
-                _progressBarState.value = false
-                _viewsState.value = true
-                _detailDataState.postValue(dataModel)
+                progressBarState.value = false
+                viewsState.value = true
+                detailDataState.postValue(dataModel)
             }.onFailure { ex ->
-                _progressBarState.value = false
-                _errorState.value = ex
+                progressBarState.value = false
+                errorState.value = ex
             }
         }
     }

@@ -25,10 +25,8 @@ import retrofit2.HttpException
 
 class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
 
-    private var _binding: FragmentRecipeSearchBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentRecipeSearchBinding
     private var rvRecipesAdapter: AllRecipesAdapter? = null
-    private var listRecipes: ArrayList<RecipeModel> = arrayListOf()
     private val viewModel: RecipeSearchFragmentViewModel by viewModels(extrasProducer = {
         MutableCreationExtras().apply {
             set(ViewModelArgsKeys.getRecipesByNameCaseKey, DataDependency.getRecipesByNameUseCase)
@@ -39,16 +37,32 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentRecipeSearchBinding.bind(view)
-
+        binding = FragmentRecipeSearchBinding.bind(view)
+        viewModel.data.value?.let { data ->
+            val result = data.recipes
+            val listRecipes: ArrayList<RecipeModel> = arrayListOf()
+            for (i in result.indices) {
+                listRecipes.add(
+                    RecipeModel(
+                        result[i].id,
+                        result[i].title,
+                        result[i].image,
+                        result[i].imageType
+                    )
+                )
+            }
+            initAdapter(listRecipes)
+            //то что выше не работает, видимо что-то делаю не так (список затирается когда возвращаюсь)
+        }
         initViews()
     }
 
-    private fun initAdapter() {
+    private fun initAdapter(listRecipes: ArrayList<RecipeModel>) {
         rvRecipesAdapter = AllRecipesAdapter().apply {
             items = listRecipes
             onItemClickListener = { itemData ->
                 val bundle = Bundle()
+                bundle.putString("key-last-frag", "search")
                 bundle.putLong("key-id-ingredient", itemData.id)
                 bundle.putString("key-name-ingredient", itemData.title)
                 bundle.putString("key-image-ingredient", itemData.image)
@@ -81,6 +95,7 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
             binding.progressBar.isVisible = isVisible
         }
         viewModel.recipeDataState.observe(viewLifecycleOwner) { recipesDataModel ->
+            val listRecipes: ArrayList<RecipeModel> = arrayListOf()
             recipesDataModel?.let { data ->
                 val result = data.recipes
                 listRecipes.clear()
@@ -101,7 +116,7 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    initAdapter()
+                    initAdapter(listRecipes)
                 }
             }
         }
@@ -121,7 +136,6 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        this._binding = null
         println("TEST TAG - RecipesSearchFragment onDestroy")
     }
 

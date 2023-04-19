@@ -8,15 +8,15 @@ import com.example.recipeappproject.domain.entity.RecipesEntity
 class IngredientResponseMapper {
 
     fun map(resp: IngredientResponse?): IngredientsEntity {
-        var list = mutableListOf<IngredientsEntity.IngredientEntity>()
+        val list = mutableListOf<IngredientsEntity.IngredientEntity>()
         return resp?.let { response ->
             with(response) {
-                if (result != null) {
-                    for(i in result.indices) {
+                result?.let { res ->
+                    for(i in res.indices) {
                         list.add(i, IngredientsEntity.IngredientEntity(
-                            result[i].amount?.metric?.unit.toString(),
-                            result[i].amount?.metric?.value!!,
-                            result[i].name.toString()
+                            res[i].amount?.metric?.unit.toString(),
+                            res[i].amount?.metric?.value!!,
+                            res[i].name.toString()
                         )
                         )
                     }

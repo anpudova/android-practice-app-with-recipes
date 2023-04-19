@@ -1,5 +1,7 @@
 package com.example.recipeappproject.ui.screen
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -7,37 +9,29 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.recipeappproject.R
+import com.example.recipeappproject.bd.DatabaseHandler
+import com.example.recipeappproject.bd.model.FavoriteRecipeModel
 import com.example.recipeappproject.databinding.FragmentDetailRecipeBinding
-import com.example.recipeappproject.databinding.FragmentRecipeSearchBinding
 import com.example.recipeappproject.di.DataDependency
 import com.example.recipeappproject.di.ViewModelArgsKeys
-import com.example.recipeappproject.ui.adapter.AllRecipesAdapter
 import com.example.recipeappproject.ui.adapter.DetailRecipeAdapter
 import com.example.recipeappproject.ui.adapter.IngredientsAdapter
 import com.example.recipeappproject.ui.model.IngredientModel
-import com.example.recipeappproject.ui.model.RecipeModel
 import com.example.recipeappproject.ui.model.StepModel
 import com.example.recipeappproject.ui.mvvm.DetailRecipeFragmentViewModel
-import com.example.recipeappproject.ui.mvvm.RecipeSearchFragmentViewModel
+import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
 
-    private var _binding: FragmentDetailRecipeBinding? = null
-    private val binding get() = _binding!!
-    private var rvIngredientsAdapter: IngredientsAdapter? = null
-    private var rvDetailRecipeAdapter: DetailRecipeAdapter? = null
-    private var listIngredients: ArrayList<IngredientModel> = arrayListOf()
-    private var listSteps: ArrayList<StepModel> = arrayListOf()
-    private var idIng: Long? = null
-    private var nameIng: String? = null
-    private var imageIng: String? = null
+    private lateinit var binding: FragmentDetailRecipeBinding
     private val viewModel: DetailRecipeFragmentViewModel by viewModels(extrasProducer = {
         MutableCreationExtras().apply {
             set(ViewModelArgsKeys.getIngredientsByIdCaseKey, DataDependency.getIngredientsByIdUseCase)
@@ -49,77 +43,79 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentDetailRecipeBinding.bind(view)
-
-        initViews()
-        idIng = arguments?.getLong("key-id-ingredient")
-        nameIng = arguments?.getString("key-name-ingredient")
-        imageIng = arguments?.getString("key-image-ingredient")
-        idIng?.let {
-            viewModel.requestIngredientsById(it)
-            observeDataIngredients()
-            viewModel.requestDetailRecipeById(it)
+        binding = FragmentDetailRecipeBinding.bind(view)
+        val last =  arguments?.getString("key-last-frag")
+        val idIng = arguments?.getLong("key-id-ingredient")
+        val nameIng = arguments?.getString("key-name-ingredient")
+        val imageIng = arguments?.getString("key-image-ingredient")
+        initViews(last, idIng, nameIng, imageIng)
+        idIng?.let { id ->
+            viewModel.requestIngredientsById(id)
+            observeDataIngredients(nameIng, imageIng)
+            viewModel.requestDetailRecipeById(id)
             observeDataDetails()
         }
     }
 
-    private fun observeDataDetails() {
-        viewModel.progressBarState.observe(viewLifecycleOwner) { isVisible ->
-            binding.progressBar.isVisible = isVisible
-        }
-        viewModel.viewsState.observe(viewLifecycleOwner) { isVisible ->
-            with(binding) {
-                scrollView.isVisible = isVisible
-            }
-        }
-        viewModel.detailDataState.observe(viewLifecycleOwner) { detailDataModel ->
-            detailDataModel?.let { data ->
-                with(binding) {
-                    listSteps.clear()
-                    val result = data.steps
-                    for (i in result.indices) {
-                        listSteps.add(
-                            StepModel(
-                                result[i].number,
-                                result[i].step
-                            )
-                        )
-                    }
-                    rvDetailRecipeAdapter = DetailRecipeAdapter().apply {
-                        items = listSteps
-                    }
-                    with(binding) {
-                        rvDetail.adapter = rvDetailRecipeAdapter
-                        rvDetail.layoutManager =
-                            LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+    private fun initViews(lastFragment: String?, id: Long?, name: String?, image: String?) {
+        with(binding) {
+            lifecycleScope.launch {
+                id?.let { id ->
+                    if (DatabaseHandler.existInFavorites(id) == 1) {
+                        ivAddFavorite.setImageResource(R.drawable.favorite_icon)
+                    } else {
+                        ivAddFavorite.setImageResource(R.drawable.not_favorite_icon)
                     }
                 }
             }
-        }
-        viewModel.errorState.observe(viewLifecycleOwner) { ex ->
-            ex?.let {
-                val errorMessage = (ex as? HttpException)?.message ?: ex.toString()
-                Toast.makeText(
-                    requireContext(),
-                    errorMessage,
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.i("ERR", errorMessage)
+            ivBack.setOnClickListener {
+                lastFragment?.let {
+                    when(lastFragment){
+                        "search" ->
+                            findNavController().navigate(
+                                R.id.action_detailRecipeFragment_to_recipeSearchFragment
+                            )
+                        "favorite" ->
+                            findNavController().navigate(
+                                R.id.action_detailRecipeFragment_to_favoriteRecipeFragment
+                            )
+                    }
+                }
+            }
+            ivAddFavorite.setOnClickListener {
+                ivAddFavorite.isEnabled = false
+                val preferences: SharedPreferences = requireActivity().getSharedPreferences("preferences", Context.MODE_PRIVATE)
+                lifecycleScope.launch {
+                    if (id != null && name != null && image != null) {
+                        if (DatabaseHandler.existInFavorites(id) == 0) {
+                            DatabaseHandler.createFavoriteRecipe(
+                                FavoriteRecipeModel(
+                                    id,
+                                    name,
+                                    image,
+                                    preferences.getLong("id", 0)
+                                )
+                            )
+                            ivAddFavorite.setImageResource(R.drawable.favorite_icon)
+                        } else {
+                            DatabaseHandler.deleteFavoriteRecipe(
+                                FavoriteRecipeModel(
+                                    id,
+                                    name,
+                                    image,
+                                    preferences.getLong("id", 0)
+                                )
+                            )
+                            ivAddFavorite.setImageResource(R.drawable.not_favorite_icon)
+                        }
+                    }
+                    ivAddFavorite.isEnabled = true
+                }
             }
         }
     }
 
-    private fun initViews() {
-        with(binding) {
-            llSearch.setOnClickListener {
-                findNavController().navigate(
-                    R.id.action_detailRecipeFragment_to_recipeSearchFragment
-                )
-            }
-        }
-    }
-
-    private fun observeDataIngredients() {
+    private fun observeDataIngredients(nameIng: String?, imageIng: String?) {
         viewModel.progressBarState.observe(viewLifecycleOwner) { isVisible ->
             binding.progressBar.isVisible = isVisible
         }
@@ -129,13 +125,13 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
             }
         }
         viewModel.ingredientDataState.observe(viewLifecycleOwner) { ingredientDataModel ->
+            val listIngredients: ArrayList<IngredientModel> = arrayListOf()
             ingredientDataModel?.let { data ->
                 with(binding) {
                     tvNameRecipe.text = nameIng
                     Glide.with(requireContext())
                         .load(imageIng)
                         .into(ivRecipe)
-                    listIngredients.clear()
                     val result = data.ingredients
                     for (i in result.indices) {
                         listIngredients.add(
@@ -146,7 +142,7 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
                             )
                         )
                     }
-                    rvIngredientsAdapter = IngredientsAdapter().apply {
+                    val rvIngredientsAdapter = IngredientsAdapter().apply {
                         items = listIngredients
                     }
                     with(binding) {
@@ -170,9 +166,53 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
         }
     }
 
+    private fun observeDataDetails() {
+        viewModel.progressBarState.observe(viewLifecycleOwner) { isVisible ->
+            binding.progressBar.isVisible = isVisible
+        }
+        viewModel.viewsState.observe(viewLifecycleOwner) { isVisible ->
+            with(binding) {
+                scrollView.isVisible = isVisible
+            }
+        }
+        viewModel.detailDataState.observe(viewLifecycleOwner) { detailDataModel ->
+            val listSteps: ArrayList<StepModel> = arrayListOf()
+            detailDataModel?.let { data ->
+                listSteps.clear()
+                val result = data.steps
+                for (i in result.indices) {
+                    listSteps.add(
+                        StepModel(
+                            result[i].number,
+                            result[i].step
+                        )
+                    )
+                }
+                val rvDetailRecipeAdapter = DetailRecipeAdapter().apply {
+                    items = listSteps
+                }
+                with(binding) {
+                    rvDetail.adapter = rvDetailRecipeAdapter
+                    rvDetail.layoutManager =
+                        LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+                }
+            }
+        }
+        viewModel.errorState.observe(viewLifecycleOwner) { ex ->
+            ex?.let {
+                val errorMessage = (ex as? HttpException)?.message ?: ex.toString()
+                Toast.makeText(
+                    requireContext(),
+                    errorMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.i("ERR", errorMessage)
+            }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        this._binding = null
         println("TEST TAG - DetailRecipeFragment onDestroy")
     }
 

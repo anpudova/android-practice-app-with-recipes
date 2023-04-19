@@ -10,8 +10,8 @@ data class DetailRecipeEntity (
 ) {
 
     fun mapDetailRecipeEntity(): DetailRecipeDataModel {
-        var listStep = mutableListOf<StepModel>()
-        if (steps != null) {
+        val listStep = mutableListOf<StepModel>()
+        steps?.let { steps ->
             for (i in steps.indices) {
                 listStep.add(
                     StepModel(

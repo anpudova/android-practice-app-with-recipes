@@ -10,8 +10,8 @@ data class IngredientsEntity (
 ) {
 
     fun mapIngredientsEntity(): IngredientsDataModel {
-        var list = mutableListOf<IngredientModel>()
-        if (ingredients != null) {
+        val list = mutableListOf<IngredientModel>()
+        ingredients?.let { ingredients ->
             for(i in ingredients.indices) {
                 list.add(i,
                     IngredientModel(

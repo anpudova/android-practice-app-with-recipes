@@ -21,30 +21,23 @@
             android:layout_marginEnd="15dp"
             android:layout_marginTop="10dp">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/llSearch"
-                android:layout_width="wrap_content"
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="40dp"
                 android:layout_height="match_parent"
-                android:layout_alignParentStart="true">
+                android:padding="10dp"
+                app:srcCompat="@drawable/back_icon"
+                android:layout_alignParentStart="true" />
 
-                <ImageView
-                    android:id="@+id/ivSearch"
-                    android:layout_width="40dp"
-                    android:layout_height="match_parent"
-                    android:padding="10dp"
-                    app:srcCompat="@drawable/back_icon" />
-
-                <TextView
-                    android:id="@+id/btnBackSearch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:backgroundTint="@color/white"
-                    android:text="Search"
-                    android:textSize="20sp"
-                    android:gravity="center"
-                    android:textColor="@color/main_text_color_black"/>
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            <ImageView
+                android:id="@+id/ivAddFavorite"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:padding="5dp"
+                android:layout_marginEnd="5dp"
+                android:enabled="true"
+                app:srcCompat="@drawable/not_favorite_icon"/>
 
         </RelativeLayout>
 
@@ -67,6 +60,8 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -83,64 +78,63 @@
                 android:id="@+id/tvNameRecipe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:background="@color/main_background_grey"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:text="Name Recipe"
                 android:textColor="@color/main_text_color_black"
-                android:textSize="25sp"/>
+                android:textSize="25sp" />
 
             <ImageView
                 android:id="@+id/ivRecipe"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:padding="10dp"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="15dp"
+                android:padding="10dp" />
 
             <TextView
                 android:id="@+id/tvIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:background="@color/main_background_grey"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
                 android:text="Ingredients:"
                 android:textColor="@color/main_text_color_black"
-                android:textSize="22sp"/>
+                android:textSize="22sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:padding="5dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_ingredient"
-                android:nestedScrollingEnabled="false"/>
+                tools:listitem="@layout/item_ingredient" />
 
             <TextView
                 android:id="@+id/tvRecipe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:background="@color/main_background_grey"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
                 android:text="Recipe:"
                 android:textColor="@color/main_text_color_black"
-                android:textSize="22sp"/>
+                android:textSize="22sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDetail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:padding="5dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_step"
-                android:nestedScrollingEnabled="false"/>
+                tools:listitem="@layout/item_step" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
