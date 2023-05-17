@@ -54,18 +54,10 @@ class RegistrationFragment: Fragment(R.layout.fragment_register) {
                             )
 
                         } else {
-                            Toast.makeText(
-                                requireContext(),
-                                "This username already exists",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            tvMessage.text = "This username already exists"
                         }
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Password/Username entered incorrectly (password 8-20 symb a-zA-Z0-9, username 2-20 sumb)",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        tvMessage.text = "Password/Username entered incorrectly (password 8-20 symb a-zA-Z0-9, username 2-20 sumb)"
                     }
                 }
             }

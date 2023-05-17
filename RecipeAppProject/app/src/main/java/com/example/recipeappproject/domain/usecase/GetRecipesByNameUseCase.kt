@@ -6,7 +6,7 @@ import com.example.recipeappproject.ui.model.RecipesDataModel
 class GetRecipesByNameUseCase (
     private val recipeRepository: IRecipeRepository
 ) {
-    suspend operator fun invoke(recipe: String): RecipesDataModel {
-        return recipeRepository.getRecipesByName(recipe).mapRecipeEntity()
+    suspend operator fun invoke(recipe: String, diet: String): RecipesDataModel {
+        return recipeRepository.getRecipesByName(recipe, diet).mapRecipeEntity()
     }
 }

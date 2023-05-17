@@ -19,9 +19,9 @@ class RecipeRepository (
     private val detailRecipeResponseMapper: DetailRecipeResponseMapper
 ): IRecipeRepository {
 
-    override suspend fun getRecipesByName(recipe: String): RecipesEntity {
+    override suspend fun getRecipesByName(recipe: String, diet: String): RecipesEntity {
         return withContext(Dispatchers.IO) {
-            (recipeResponseMapper::map)(remoteSource.getRecipeByName(recipe = recipe))
+            (recipeResponseMapper::map)(remoteSource.getRecipeByName(recipe = recipe, diet = diet))
         }
     }
 

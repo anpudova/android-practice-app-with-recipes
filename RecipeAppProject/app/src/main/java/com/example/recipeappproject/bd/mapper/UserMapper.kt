@@ -14,14 +14,8 @@ object UserMapper {
     }
 
     fun mapUserModel(user: UserEntity?): UserModel? {
-        if (user != null) {
-            with(user) {
-                return UserModel(
-                    id, username, password
-                )
-            }
-        } else {
-            return null
+        return user?.let {
+            UserModel(it.id, it.username, it.password)
         }
     }
 }

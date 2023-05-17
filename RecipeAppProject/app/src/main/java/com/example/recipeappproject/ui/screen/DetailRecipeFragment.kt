@@ -2,6 +2,7 @@ package com.example.recipeappproject.ui.screen
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -44,17 +45,30 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDetailRecipeBinding.bind(view)
-        val last =  arguments?.getString("key-last-frag")
-        val idIng = arguments?.getLong("key-id-ingredient")
-        val nameIng = arguments?.getString("key-name-ingredient")
-        val imageIng = arguments?.getString("key-image-ingredient")
+        val preferences: SharedPreferences = requireActivity().getSharedPreferences("preferences", Context.MODE_PRIVATE)
+        binding.ivAddFavorite.isVisible = preferences.getString("username", "") != ""
+        val last =  arguments?.getString(KEY_LAST_FRAGMENT)
+        val idIng = arguments?.getLong(KEY_ID_INGREDIENT)
+        val nameIng = arguments?.getString(KEY_NAME_INGREDIENT)
+        val imageIng = arguments?.getString(KEY_IMAGE_INGREDIENT)
         initViews(last, idIng, nameIng, imageIng)
-        idIng?.let { id ->
-            viewModel.requestIngredientsById(id)
-            observeDataIngredients(nameIng, imageIng)
-            viewModel.requestDetailRecipeById(id)
-            observeDataDetails()
+        with(binding) {
+            tvNotFound.isVisible = false
+            if (isOnline()) {
+                idIng?.let { id ->
+                    viewModel.requestIngredientsById(id)
+                    observeDataIngredients(nameIng, imageIng)
+                    viewModel.requestDetailRecipeById(id)
+                    observeDataDetails()
+                }
+            } else {
+                scrollView.isVisible = false
+                tvNotFound.text = MESSAGE_NO_CONNECT
+                tvNotFound.isVisible = true
+
+            }
         }
+
     }
 
     private fun initViews(lastFragment: String?, id: Long?, name: String?, image: String?) {
@@ -71,11 +85,11 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
             ivBack.setOnClickListener {
                 lastFragment?.let {
                     when(lastFragment){
-                        "search" ->
+                        SEARCH_FRAGMENT ->
                             findNavController().navigate(
                                 R.id.action_detailRecipeFragment_to_recipeSearchFragment
                             )
-                        "favorite" ->
+                        FAVORITE_FRAGMENT ->
                             findNavController().navigate(
                                 R.id.action_detailRecipeFragment_to_favoriteRecipeFragment
                             )
@@ -120,9 +134,7 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
             binding.progressBar.isVisible = isVisible
         }
         viewModel.viewsState.observe(viewLifecycleOwner) { isVisible ->
-            with(binding) {
-                scrollView.isVisible = isVisible
-            }
+            binding.scrollView.isVisible = isVisible
         }
         viewModel.ingredientDataState.observe(viewLifecycleOwner) { ingredientDataModel ->
             val listIngredients: ArrayList<IngredientModel> = arrayListOf()
@@ -161,7 +173,7 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
                     errorMessage,
                     Toast.LENGTH_SHORT
                 ).show()
-                Log.i("ERR", errorMessage)
+                Log.i(ERROR, errorMessage)
             }
         }
     }
@@ -171,9 +183,7 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
             binding.progressBar.isVisible = isVisible
         }
         viewModel.viewsState.observe(viewLifecycleOwner) { isVisible ->
-            with(binding) {
-                scrollView.isVisible = isVisible
-            }
+            binding.scrollView.isVisible = isVisible
         }
         viewModel.detailDataState.observe(viewLifecycleOwner) { detailDataModel ->
             val listSteps: ArrayList<StepModel> = arrayListOf()
@@ -206,9 +216,15 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
                     errorMessage,
                     Toast.LENGTH_SHORT
                 ).show()
-                Log.i("ERR", errorMessage)
+                Log.i(ERROR, errorMessage)
             }
         }
+    }
+
+    private fun isOnline(): Boolean {
+        val cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        return netInfo != null && netInfo.isConnectedOrConnecting
     }
 
     override fun onDestroyView() {
@@ -224,5 +240,21 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
     override fun onPause() {
         super.onPause()
         println("TEST TAG - DetailRecipeFragment onPause")
+    }
+
+    companion object {
+
+        const val SEARCH_FRAGMENT = "search"
+        const val FAVORITE_FRAGMENT = "favorite"
+
+        const val KEY_LAST_FRAGMENT = "key-last-frag"
+        const val KEY_ID_INGREDIENT = "key-id-ingredient"
+        const val KEY_NAME_INGREDIENT = "key-name-ingredient"
+        const val KEY_IMAGE_INGREDIENT = "key-image-ingredient"
+
+        const val ERROR = "ERR"
+
+        const val MESSAGE_NO_CONNECT = "No internet connection."
+        const val MESSAGE_NOT_FOUND = "No recipe found for your request :("
     }
 }

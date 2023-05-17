@@ -9,9 +9,10 @@ import retrofit2.http.Query
 
 interface RecipeApiService {
 
-    @GET("recipes/complexSearch")
+    @GET("recipes/complexSearch?number=100")
     suspend fun getRecipeByName(
-        @Query("query") recipe: String
+        @Query("query") recipe: String,
+        @Query("diet") diet: String
     ): RecipeResponse
 
     @GET("/recipes/{id}/ingredientWidget.json")

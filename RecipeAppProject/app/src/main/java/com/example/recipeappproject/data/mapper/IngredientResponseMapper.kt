@@ -15,7 +15,7 @@ class IngredientResponseMapper {
                     for(i in res.indices) {
                         list.add(i, IngredientsEntity.IngredientEntity(
                             res[i].amount?.metric?.unit.toString(),
-                            res[i].amount?.metric?.value!!,
+                            res[i].amount?.metric?.value.orEmpty(),
                             res[i].name.toString()
                         )
                         )
@@ -25,4 +25,7 @@ class IngredientResponseMapper {
             }
         } ?: IngredientsEntity(null)
     }
+
+    private fun Float?.orEmpty() =
+        this ?: 0F
 }

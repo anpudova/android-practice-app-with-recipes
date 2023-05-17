@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,23 +30,32 @@ class FavoriteRecipeFragment: Fragment(R.layout.fragment_favorite_recipe) {
         binding = FragmentFavoriteRecipeBinding.bind(view)
 
         val preferences: SharedPreferences = requireActivity().getSharedPreferences("preferences", Context.MODE_PRIVATE)
-        val editPreferences: SharedPreferences.Editor = preferences.edit()
-        var recipes: List<FavoriteRecipeModel>?
-        lifecycleScope.launch {
-            recipes = DatabaseHandler.getFavoriteRecipes(preferences.getLong("id", 0))
-            val list = mutableListOf<RecipeModel>()
-            recipes?.let {
-                for (i in it.indices) {
-                    list.add(
-                        RecipeModel(
-                            it[i].id,
-                            it[i].name,
-                            it[i].image,
-                            ""
-                        )
-                    )
+        with(binding) {
+            val id = preferences.getLong("id", -1)
+            if (id != -1L) {
+                llLogin.isVisible = false
+                rvRecipes.isVisible = true
+                var recipes: List<FavoriteRecipeModel>?
+                lifecycleScope.launch {
+                    recipes = DatabaseHandler.getFavoriteRecipes(preferences.getLong("id", 0))
+                    val list = mutableListOf<RecipeModel>()
+                    recipes?.let {
+                        for (i in it.indices) {
+                            list.add(
+                                RecipeModel(
+                                    it[i].id,
+                                    it[i].name,
+                                    it[i].image,
+                                    ""
+                                )
+                            )
+                        }
+                        initAdapter(list as ArrayList<RecipeModel>)
+                    }
                 }
-                initAdapter(list as ArrayList<RecipeModel>)
+            } else {
+                llLogin.isVisible = true
+                rvRecipes.isVisible = false
             }
         }
     }
@@ -55,10 +65,10 @@ class FavoriteRecipeFragment: Fragment(R.layout.fragment_favorite_recipe) {
             items = listRecipes
             onItemClickListener = { itemData ->
                 val bundle = Bundle()
-                bundle.putString("key-last-frag", "favorite")
-                bundle.putLong("key-id-ingredient", itemData.id)
-                bundle.putString("key-name-ingredient", itemData.title)
-                bundle.putString("key-image-ingredient", itemData.image)
+                bundle.putString(KEY_LAST_FRAGMENT, "favorite")
+                bundle.putLong(KEY_ID_INGREDIENT, itemData.id)
+                bundle.putString(KEY_NAME_INGREDIENT, itemData.title)
+                bundle.putString(KEY_IMAGE_INGREDIENT, itemData.image)
                 findNavController().navigate(
                     R.id.action_favoriteRecipeFragment_to_detailRecipeFragment,
                     bundle
@@ -85,5 +95,13 @@ class FavoriteRecipeFragment: Fragment(R.layout.fragment_favorite_recipe) {
     override fun onPause() {
         super.onPause()
         println("TEST TAG - FavoriteRecipeFragment onPause")
+    }
+
+    companion object {
+
+        const val KEY_LAST_FRAGMENT = "key-last-frag"
+        const val KEY_ID_INGREDIENT = "key-id-ingredient"
+        const val KEY_NAME_INGREDIENT = "key-name-ingredient"
+        const val KEY_IMAGE_INGREDIENT = "key-image-ingredient"
     }
 }

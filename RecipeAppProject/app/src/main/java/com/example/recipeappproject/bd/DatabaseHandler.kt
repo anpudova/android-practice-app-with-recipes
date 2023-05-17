@@ -46,6 +46,19 @@ object DatabaseHandler {
         }
     }
 
+    suspend fun getUserByUsername(username: String): UserModel? {
+        return withContext(Dispatchers.IO) {
+            val user: UserEntity? = roomDatabase?.getUserDao()?.getUserByUsername(username)
+            UserMapper.mapUserModel(user)
+        }
+    }
+
+    suspend fun deleteUser(user: UserModel) {
+        withContext(Dispatchers.IO) {
+            roomDatabase?.getUserDao()?.deleteUser(UserMapper.mapUserEntity(user))
+        }
+    }
+
     suspend fun createFavoriteRecipe(recipe: FavoriteRecipeModel) {
         withContext(Dispatchers.IO) {
             roomDatabase?.getFavoriteRecipeDao()?.createFavoriteRecipe(FavoriteRecipeMapper.mapFavoriteRecipeEntity(recipe))

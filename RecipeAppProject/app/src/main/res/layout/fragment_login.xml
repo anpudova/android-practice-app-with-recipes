@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -53,6 +54,21 @@
         app:layout_constraintTop_toBottomOf="@+id/et_username"
         app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text=""
+        android:textColor="@color/error_color_red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_password"
+        app:layout_constraintVertical_bias="0.09" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -63,40 +79,43 @@
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_password"
-        app:layout_constraintVertical_bias="0.26"
+        app:layout_constraintTop_toBottomOf="@+id/tvMessage"
+        app:layout_constraintVertical_bias="0.1"
         app:strokeColor="#2267DD"
         app:strokeWidth="1dp" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login"
-        app:layout_constraintVertical_bias="0.1"
-        android:orientation="horizontal">
+        app:layout_constraintVertical_bias="0.1">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
             android:text="@string/no_acc"
-            android:textColor="@color/main_text_color_black"
-            android:layout_marginEnd="5dp"/>
+            android:textColor="@color/main_text_color_black" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/register"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:textColor="@color/main_text_color_black"
             android:textSize="13sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

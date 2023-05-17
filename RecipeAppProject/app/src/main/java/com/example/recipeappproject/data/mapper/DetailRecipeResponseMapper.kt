@@ -16,7 +16,7 @@ class DetailRecipeResponseMapper {
                     for (i in steps.indices) {
                         listStep.add(
                             DetailRecipeEntity.Step(
-                                steps[i].number!!,
+                                steps[i].number.orEmpty(),
                                 steps[i].step.toString()
                             )
                         )
@@ -31,4 +31,7 @@ class DetailRecipeResponseMapper {
             emptyList()
         )
     }
+
+    private fun Int?.orEmpty() =
+        this ?: 0
 }

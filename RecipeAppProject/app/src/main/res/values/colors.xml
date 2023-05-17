@@ -10,4 +10,5 @@
     <color name="main_text_color_black">#252525</color>
     <color name="main_background_grey">#FAFAFA</color>
     <color name="main_color_blue">#2267DD</color>
+    <color name="error_color_red">#9C0000</color>
 </resources>

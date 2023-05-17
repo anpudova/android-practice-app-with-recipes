@@ -40,11 +40,7 @@ class LoginFragment: Fragment(R.layout.fragment_login) {
                             R.id.action_loginFragment_to_profileFragment
                         )
                     } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Invalid username or password",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        tvMessage.text = ERROR_MESSAGE
                     }
                 }
             }
@@ -69,5 +65,10 @@ class LoginFragment: Fragment(R.layout.fragment_login) {
     override fun onPause() {
         super.onPause()
         println("TEST TAG - LoginFragment onPause")
+    }
+
+    companion object {
+
+        const val ERROR_MESSAGE = "Invalid username or password"
     }
 }

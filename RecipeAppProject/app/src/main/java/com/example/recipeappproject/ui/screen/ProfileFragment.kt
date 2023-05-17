@@ -21,25 +21,52 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentProfileBinding.bind(view)
-        val preferences: SharedPreferences = requireActivity()
-            .getSharedPreferences("preferences", Context.MODE_PRIVATE)
+        val preferences: SharedPreferences = requireActivity().getSharedPreferences("preferences", Context.MODE_PRIVATE)
+        val editPreferences: SharedPreferences.Editor = preferences.edit()
         with(binding) {
             val username = preferences.getString("username", "")
             if (username != "") {
                 llProfile.isVisible = true
                 llLogin.isVisible = false
                 tvUsername.text = username
+                btnExit.isVisible = true
+                btnDelete.isVisible = true
             } else {
                 llProfile.isVisible = false
                 llLogin.isVisible = true
+                btnExit.isVisible = false
+                btnDelete.isVisible = false
+            }
+
+            mbLogin.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_profileFragment_to_loginFragment
+                )
+            }
+            btnExit.setOnClickListener {
+                editPreferences.clear()
+                editPreferences.apply()
+                findNavController().navigate(
+                    R.id.action_profileFragment_self
+                )
+            }
+            btnDelete.setOnClickListener {
+                lifecycleScope.launch {
+                    username?.let { username ->
+                        val user = DatabaseHandler.getUserByUsername(username)
+                        user?.let { user ->
+                            DatabaseHandler.deleteUser(user)
+                        }
+                    }
+                    editPreferences.clear()
+                    editPreferences.apply()
+                    findNavController().navigate(
+                        R.id.action_profileFragment_self
+                    )
+                }
             }
         }
 
-        binding.mbLogin.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_profileFragment_to_loginFragment
-            )
-        }
     }
 
     override fun onDestroyView() {

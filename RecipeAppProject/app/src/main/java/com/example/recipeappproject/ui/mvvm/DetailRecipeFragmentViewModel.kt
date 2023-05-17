@@ -45,7 +45,7 @@ class DetailRecipeFragmentViewModel (
         viewModelScope.launch {
             progressBarState.value = true
             viewsState.value = false
-            delay(2000L)
+            delay(TIME_MILLIS)
             runCatching {
                 getDetailUseCase(id)
             }.onSuccess { dataModel ->
@@ -60,6 +60,8 @@ class DetailRecipeFragmentViewModel (
     }
 
     companion object {
+
+        const val TIME_MILLIS = 2000L
 
         val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
 

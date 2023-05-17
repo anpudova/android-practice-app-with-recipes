@@ -1,12 +1,11 @@
 package com.example.recipeappproject.ui.screen
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,6 +22,7 @@ import com.example.recipeappproject.ui.model.RecipeModel
 import com.example.recipeappproject.ui.mvvm.RecipeSearchFragmentViewModel
 import retrofit2.HttpException
 
+
 class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
 
     private lateinit var binding: FragmentRecipeSearchBinding
@@ -35,24 +35,15 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
         RecipeSearchFragmentViewModel.factory
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRecipeSearchBinding.bind(view)
         viewModel.data.value?.let { data ->
-            val result = data.recipes
-            val listRecipes: ArrayList<RecipeModel> = arrayListOf()
-            for (i in result.indices) {
-                listRecipes.add(
-                    RecipeModel(
-                        result[i].id,
-                        result[i].title,
-                        result[i].image,
-                        result[i].imageType
-                    )
-                )
-            }
-            initAdapter(listRecipes)
-            //то что выше не работает, видимо что-то делаю не так (список затирается когда возвращаюсь)
+            initAdapter(data.recipes as ArrayList<RecipeModel>)
         }
         initViews()
     }
@@ -62,10 +53,10 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
             items = listRecipes
             onItemClickListener = { itemData ->
                 val bundle = Bundle()
-                bundle.putString("key-last-frag", "search")
-                bundle.putLong("key-id-ingredient", itemData.id)
-                bundle.putString("key-name-ingredient", itemData.title)
-                bundle.putString("key-image-ingredient", itemData.image)
+                bundle.putString(KEY_LAST_FRAGMENT, "search")
+                bundle.putLong(KEY_ID_INGREDIENT, itemData.id)
+                bundle.putString(KEY_NAME_INGREDIENT, itemData.title)
+                bundle.putString(KEY_IMAGE_INGREDIENT, itemData.image)
                 findNavController().navigate(
                     R.id.action_recipeSearchFragment_to_detailRecipeFragment,
                     bundle
@@ -81,21 +72,32 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
 
     private fun initViews() {
         with(binding) {
+            tvNotFound.isVisible = false
             ivSearch.setOnClickListener {
                 if (etSearchRecipe.text.toString()  != "") {
-                    observeData(etSearchRecipe.text.toString())
+                    if (isOnline()) {
+                        observeData(etSearchRecipe.text.toString(), spinnerDiet.selectedItem.toString())
+                    } else {
+                        rvRecipes.isVisible = false
+                        tvNotFound.text = MESSAGE_NO_CONNECT
+                        tvNotFound.isVisible = true
+                    }
                 }
             }
         }
     }
 
-    private fun observeData(recipeName: String?) {
-        viewModel.requestRecipesByName(recipeName.toString())
+    private fun observeData(recipeName: String?, diet: String) {
+        binding.tvNotFound.isVisible = false
+        val listRecipes: ArrayList<RecipeModel> = arrayListOf()
+        viewModel.requestRecipesByName(recipeName.toString(), diet)
         viewModel.progressBarState.observe(viewLifecycleOwner) { isVisible ->
-            binding.progressBar.isVisible = isVisible
+            with(binding) {
+                progressBar.isVisible = isVisible
+                rvRecipes.isVisible = !isVisible
+            }
         }
         viewModel.recipeDataState.observe(viewLifecycleOwner) { recipesDataModel ->
-            val listRecipes: ArrayList<RecipeModel> = arrayListOf()
             recipesDataModel?.let { data ->
                 val result = data.recipes
                 listRecipes.clear()
@@ -109,16 +111,18 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
                         )
                     )
                 }
-                if (listRecipes.isNullOrEmpty()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Not found recipe :(",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    initAdapter(listRecipes)
+                with(binding) {
+                    if (listRecipes.isEmpty()) {
+                        tvNotFound.text = MESSAGE_NOT_FOUND
+                        tvNotFound.isVisible = true
+                        rvRecipes.isVisible = false
+                    } else {
+                        tvNotFound.isVisible = false
+                        initAdapter(listRecipes)
+                    }
                 }
             }
+
         }
         viewModel.errorState.observe(viewLifecycleOwner) { ex ->
             ex?.let {
@@ -131,7 +135,12 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
                 Log.i("ERR", errorMessage)
             }
         }
+    }
 
+    private fun isOnline(): Boolean {
+        val cm = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        return netInfo != null && netInfo.isConnectedOrConnecting
     }
 
     override fun onDestroyView() {
@@ -147,5 +156,16 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
     override fun onPause() {
         super.onPause()
         println("TEST TAG - RecipesSearchFragment onPause")
+    }
+
+    companion object {
+
+        const val KEY_LAST_FRAGMENT = "key-last-frag"
+        const val KEY_ID_INGREDIENT = "key-id-ingredient"
+        const val KEY_NAME_INGREDIENT = "key-name-ingredient"
+        const val KEY_IMAGE_INGREDIENT = "key-image-ingredient"
+
+        const val MESSAGE_NO_CONNECT = "No internet connection."
+        const val MESSAGE_NOT_FOUND = "No recipes found for your request :("
     }
 }

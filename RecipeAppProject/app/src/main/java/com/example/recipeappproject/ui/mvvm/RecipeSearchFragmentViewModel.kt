@@ -15,15 +15,15 @@ class RecipeSearchFragmentViewModel (
     val progressBarState: MutableLiveData<Boolean> = MutableLiveData(false)
     val recipeDataState: MutableLiveData<RecipesDataModel?> = MutableLiveData(null)
     val errorState: MutableLiveData<Throwable> = MutableLiveData(null)
-    private var data_: MutableLiveData<RecipesDataModel> = MutableLiveData(null)
+    var data_: MutableLiveData<RecipesDataModel> = MutableLiveData(null)
     var data: LiveData<RecipesDataModel> = data_
 
-    fun requestRecipesByName(name: String) {
+    fun requestRecipesByName(name: String, diet: String) {
         viewModelScope.launch {
             progressBarState.value = true
             delay(2000L)
             runCatching {
-                getRecipesUseCase(name)
+                getRecipesUseCase(name, diet)
             }.onSuccess { dataModel ->
                 data_.value = dataModel
                 progressBarState.value = false
