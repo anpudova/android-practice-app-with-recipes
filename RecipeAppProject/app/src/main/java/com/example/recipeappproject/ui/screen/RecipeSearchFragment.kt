@@ -26,7 +26,7 @@ import retrofit2.HttpException
 class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
 
     private lateinit var binding: FragmentRecipeSearchBinding
-    private var rvRecipesAdapter: AllRecipesAdapter? = null
+    private var rvRecipesAdapter = AllRecipesAdapter()
     private val viewModel: RecipeSearchFragmentViewModel by viewModels(extrasProducer = {
         MutableCreationExtras().apply {
             set(ViewModelArgsKeys.getRecipesByNameCaseKey, DataDependency.getRecipesByNameUseCase)
@@ -39,35 +39,38 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
         super.onSaveInstanceState(outState)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        rvRecipesAdapter.onItemClickListener = { itemData ->
+            val bundle = Bundle()
+            bundle.putString(KEY_LAST_FRAGMENT, "search")
+            bundle.putLong(KEY_ID_INGREDIENT, itemData.id)
+            bundle.putString(KEY_NAME_INGREDIENT, itemData.title)
+            bundle.putString(KEY_IMAGE_INGREDIENT, itemData.image)
+            findNavController().navigate(
+                R.id.action_recipeSearchFragment_to_detailRecipeFragment,
+                bundle
+            )
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRecipeSearchBinding.bind(view)
         viewModel.data.value?.let { data ->
-            initAdapter(data.recipes as ArrayList<RecipeModel>)
-        }
-        initViews()
-    }
-
-    private fun initAdapter(listRecipes: ArrayList<RecipeModel>) {
-        rvRecipesAdapter = AllRecipesAdapter().apply {
-            items = listRecipes
-            onItemClickListener = { itemData ->
-                val bundle = Bundle()
-                bundle.putString(KEY_LAST_FRAGMENT, "search")
-                bundle.putLong(KEY_ID_INGREDIENT, itemData.id)
-                bundle.putString(KEY_NAME_INGREDIENT, itemData.title)
-                bundle.putString(KEY_IMAGE_INGREDIENT, itemData.image)
-                findNavController().navigate(
-                    R.id.action_recipeSearchFragment_to_detailRecipeFragment,
-                    bundle
-                )
-            }
+            updateItems(data.recipes as ArrayList<RecipeModel>)
         }
         with(binding) {
             rvRecipes.adapter = rvRecipesAdapter
             rvRecipes.layoutManager =
                 LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         }
+        initViews()
+    }
+
+    private fun updateItems(listRecipes: ArrayList<RecipeModel>) {
+        rvRecipesAdapter.items = listRecipes
     }
 
     private fun initViews() {
@@ -118,7 +121,7 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
                         rvRecipes.isVisible = false
                     } else {
                         tvNotFound.isVisible = false
-                        initAdapter(listRecipes)
+                        updateItems(listRecipes)
                     }
                 }
             }
