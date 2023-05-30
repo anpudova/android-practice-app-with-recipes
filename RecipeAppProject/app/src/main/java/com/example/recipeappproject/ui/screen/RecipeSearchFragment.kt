@@ -51,22 +51,6 @@ class RecipeSearchFragment: Fragment(R.layout.fragment_recipe_search) {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        rvRecipesAdapter.onItemClickListener = { itemData ->
-            val bundle = Bundle()
-            bundle.putString(KEY_LAST_FRAGMENT, "search")
-            bundle.putLong(KEY_ID_INGREDIENT, itemData.id)
-            bundle.putString(KEY_NAME_INGREDIENT, itemData.title)
-            bundle.putString(KEY_IMAGE_INGREDIENT, itemData.image)
-            findNavController().navigate(
-                R.id.action_recipeSearchFragment_to_detailRecipeFragment,
-                bundle
-            )
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRecipeSearchBinding.bind(view)
