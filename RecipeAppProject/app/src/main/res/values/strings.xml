@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">RecipeAppProject</string>
+    <string name="search">Search</string>
+    <string name="favorites">Favorites</string>
+    <string name="profile">Profile</string>
+    <string name="available_only_auth">Available only to authorized users</string>
+    <string name="log_in">LogIn</string>
+    <string name="register">Register</string>
+    <string name="no_acc">No accaunt?</string>
+    <string name="pass">Password</string>
+    <string name="username">Username</string>
+    <string name="recipe_name">Recipe name</string>
+    <string name="diet">Diet:</string>
+    <string name="sign_up">SignUp</string>
+    <string-array name="diet">
+        <item> </item>
+        <item>gluten free</item>
+        <item>ketogenic</item>
+        <item>vegetarian</item>
+        <item>lacto-vegetarian</item>
+        <item>vegan</item>
+        <item>pescetarian</item>
+        <item>paleo</item>
+        <item>primal</item>
+        <item>whole30</item>
+    </string-array>
+</resources>
