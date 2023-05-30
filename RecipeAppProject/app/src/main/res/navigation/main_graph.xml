@@ -17,9 +17,6 @@
         android:name="com.example.recipeappproject.ui.screen.DetailRecipeFragment"
         android:label="DetailRecipeFragment" >
         <action
-            android:id="@+id/action_detailRecipeFragment_to_recipeSearchFragment"
-            app:destination="@id/recipeSearchFragment" />
-        <action
             android:id="@+id/action_detailRecipeFragment_to_favoriteRecipeFragment"
             app:destination="@id/favoriteRecipeFragment" />
     </fragment>
