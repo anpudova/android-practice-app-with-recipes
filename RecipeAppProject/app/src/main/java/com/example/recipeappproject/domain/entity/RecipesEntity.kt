@@ -9,13 +9,12 @@ data class RecipesEntity (
     fun mapRecipeEntity(): RecipesDataModel {
         val list = mutableListOf<RecipeModel>()
         recipes?.let { recipes ->
-            for(i in recipes.indices) {
-                list.add(i,
-                    RecipeModel(
-                        recipes[i].id,
-                        recipes[i].title,
-                        recipes[i].image,
-                        recipes[i].imageType
+            recipes.forEach { item ->
+                list.add(RecipeModel(
+                    item.id,
+                    item.title,
+                    item.image,
+                    item.imageType
                     )
                 )
             }

@@ -13,11 +13,11 @@ class DetailRecipeResponseMapper {
         return resp?.let { response ->
             with(response) {
                 get(0).steps?.let { steps ->
-                    for (i in steps.indices) {
+                    steps.forEach { item ->
                         listStep.add(
                             DetailRecipeEntity.Step(
-                                steps[i].number.orEmpty(),
-                                steps[i].step.toString()
+                                item.number.orEmpty(),
+                                item.step.toString()
                             )
                         )
                     }

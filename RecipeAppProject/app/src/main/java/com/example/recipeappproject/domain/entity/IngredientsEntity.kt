@@ -12,12 +12,11 @@ data class IngredientsEntity (
     fun mapIngredientsEntity(): IngredientsDataModel {
         val list = mutableListOf<IngredientModel>()
         ingredients?.let { ingredients ->
-            for(i in ingredients.indices) {
-                list.add(i,
-                    IngredientModel(
-                        ingredients[i].unit,
-                        ingredients[i].value,
-                        ingredients[i].name
+            ingredients.forEach { item ->
+                list.add(IngredientModel(
+                    item.unit,
+                    item.value,
+                    item.name
                     )
                 )
             }

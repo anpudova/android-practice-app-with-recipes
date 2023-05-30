@@ -10,9 +10,10 @@
     <string name="pass">Password</string>
     <string name="username">Username</string>
     <string name="recipe_name">Recipe name</string>
+    <string name="diet">Diet:</string>
     <string name="sign_up">SignUp</string>
     <string-array name="diet">
-        <item></item>
+        <item> </item>
         <item>gluten free</item>
         <item>ketogenic</item>
         <item>vegetarian</item>

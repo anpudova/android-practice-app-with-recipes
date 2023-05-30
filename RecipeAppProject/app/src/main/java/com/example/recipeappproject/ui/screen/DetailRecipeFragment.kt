@@ -86,9 +86,7 @@ class DetailRecipeFragment: Fragment(R.layout.fragment_detail_recipe) {
                 lastFragment?.let {
                     when(lastFragment){
                         SEARCH_FRAGMENT ->
-                            findNavController().navigate(
-                                R.id.action_detailRecipeFragment_to_recipeSearchFragment
-                            )
+                            requireActivity().onBackPressedDispatcher.onBackPressed()
                         FAVORITE_FRAGMENT ->
                             findNavController().navigate(
                                 R.id.action_detailRecipeFragment_to_favoriteRecipeFragment

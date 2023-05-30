@@ -57,6 +57,11 @@ class FavoriteRecipeFragment: Fragment(R.layout.fragment_favorite_recipe) {
                 llLogin.isVisible = true
                 rvRecipes.isVisible = false
             }
+            mbLogin.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_favoriteRecipeFragment_to_loginFragment
+                )
+            }
         }
     }
 

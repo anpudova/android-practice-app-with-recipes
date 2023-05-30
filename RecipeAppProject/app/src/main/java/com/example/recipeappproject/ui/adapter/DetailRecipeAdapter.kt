@@ -18,7 +18,7 @@ class DetailRecipeAdapter: RecyclerView.Adapter<DetailRecipeAdapter.ItemStepView
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemStepViewHolder {
         return ItemStepViewHolder(
-            _binding = ItemStepBinding.inflate(
+            binding = ItemStepBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -33,11 +33,11 @@ class DetailRecipeAdapter: RecyclerView.Adapter<DetailRecipeAdapter.ItemStepView
     override fun getItemCount(): Int = items.size
 
     inner class ItemStepViewHolder(
-        private var _binding: ItemStepBinding
-    ) : RecyclerView.ViewHolder(_binding.root) {
+        private val binding: ItemStepBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindItem(item: StepModel) {
-            with(_binding) {
+            with(binding) {
                 tvNumber.text = item.number.toString()
                 tvStep.text = item.step
             }

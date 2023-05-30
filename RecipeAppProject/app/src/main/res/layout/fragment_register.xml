@@ -30,12 +30,13 @@
         android:inputType="text"
         android:textColor="@color/main_text_color_black"
         android:textSize="20sp"
+        android:textColorHint="@color/hint_color_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvNamePage"
-        app:layout_constraintVertical_bias="0.26" />
+        app:layout_constraintVertical_bias="0.26"/>
 
     <EditText
         android:id="@+id/etPassword"
@@ -47,6 +48,7 @@
         android:hint="@string/pass"
         android:textSize="20sp"
         android:textColor="@color/main_text_color_black"
+        android:textColorHint="@color/hint_color_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

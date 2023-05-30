@@ -21,7 +21,7 @@ class RecipeSearchFragmentViewModel (
     fun requestRecipesByName(name: String, diet: String) {
         viewModelScope.launch {
             progressBarState.value = true
-            delay(2000L)
+            delay(REQUEST_TIME_MILLIS_DELAY)
             runCatching {
                 getRecipesUseCase(name, diet)
             }.onSuccess { dataModel ->
@@ -36,6 +36,8 @@ class RecipeSearchFragmentViewModel (
     }
 
     companion object {
+
+        const val REQUEST_TIME_MILLIS_DELAY = 2000L
 
         val factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
 

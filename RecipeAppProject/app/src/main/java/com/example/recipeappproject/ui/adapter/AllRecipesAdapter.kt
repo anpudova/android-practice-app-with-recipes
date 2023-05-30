@@ -22,7 +22,7 @@ class AllRecipesAdapter: RecyclerView.Adapter<AllRecipesAdapter.ItemAllRecipesVi
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemAllRecipesViewHolder {
         return ItemAllRecipesViewHolder(
-            _binding = ItemRecipeBinding.inflate(
+            binding = ItemRecipeBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -37,11 +37,11 @@ class AllRecipesAdapter: RecyclerView.Adapter<AllRecipesAdapter.ItemAllRecipesVi
     override fun getItemCount(): Int = items.size
 
     inner class ItemAllRecipesViewHolder(
-        private var _binding: ItemRecipeBinding
-    ) : RecyclerView.ViewHolder(_binding.root) {
+        private val binding: ItemRecipeBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-            with (_binding) {
+            with (binding) {
                 root.setOnClickListener {
                     onItemClickListener?.invoke(items[adapterPosition])
                     notifyItemChanged(adapterPosition)
@@ -54,7 +54,7 @@ class AllRecipesAdapter: RecyclerView.Adapter<AllRecipesAdapter.ItemAllRecipesVi
         }
 
         fun bindItem(item: RecipeModel) {
-            with(_binding) {
+            with(binding) {
                 tvNameRecipe.text = item.title
                 Glide.with(ivRecipe.context)
                     .load(item.image)

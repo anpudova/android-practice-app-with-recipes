@@ -26,9 +26,6 @@ class RegistrationFragment: Fragment(R.layout.fragment_register) {
 
         with(binding) {
             btnRegister.setOnClickListener {
-                val preferences: SharedPreferences = requireActivity()
-                    .getSharedPreferences("preferences", Context.MODE_PRIVATE)
-                val editPreferences: SharedPreferences.Editor = preferences.edit()
                 val id: Long = (Math.random() * 10000000 + 1).roundToLong()
                 lifecycleScope.launch {
                     val regPass = "^[a-zA-Z0-9]{8,20}$".toRegex()
@@ -37,20 +34,16 @@ class RegistrationFragment: Fragment(R.layout.fragment_register) {
                         regName.matchEntire(etUsername.text.toString()) != null) {
                         val username: String? = DatabaseHandler.getUsername(etUsername.text.toString())
                         if (username == null) {
-                            editPreferences.putString("username", etUsername.text.toString())
-                            editPreferences.apply()
                             val user = UserModel(
                                 id = id,
                                 username = etUsername.text.toString(),
                                 password = etPassword.text.toString()
                             )
-                            editPreferences.putLong("id", id)
-                            editPreferences.apply()
 
                             DatabaseHandler.createUser(user)
 
                             findNavController().navigate(
-                                R.id.action_registrationFragment_to_profileFragment
+                                R.id.action_registrationFragment_to_loginFragment
                             )
 
                         } else {

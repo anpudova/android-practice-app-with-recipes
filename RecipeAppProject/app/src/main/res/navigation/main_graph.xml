@@ -17,9 +17,6 @@
         android:name="com.example.recipeappproject.ui.screen.DetailRecipeFragment"
         android:label="DetailRecipeFragment" >
         <action
-            android:id="@+id/action_detailRecipeFragment_to_recipeSearchFragment"
-            app:destination="@id/recipeSearchFragment" />
-        <action
             android:id="@+id/action_detailRecipeFragment_to_favoriteRecipeFragment"
             app:destination="@id/favoriteRecipeFragment" />
     </fragment>
@@ -50,8 +47,8 @@
         android:name="com.example.recipeappproject.ui.screen.RegistrationFragment"
         android:label="RegistrationFragment" >
         <action
-            android:id="@+id/action_registrationFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            android:id="@+id/action_registrationFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteRecipeFragment"
@@ -60,5 +57,8 @@
         <action
             android:id="@+id/action_favoriteRecipeFragment_to_detailRecipeFragment"
             app:destination="@id/detailRecipeFragment" />
+        <action
+            android:id="@+id/action_favoriteRecipeFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

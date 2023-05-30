@@ -11,19 +11,19 @@ class IngredientResponseMapper {
         val list = mutableListOf<IngredientsEntity.IngredientEntity>()
         return resp?.let { response ->
             with(response) {
-                result?.let { res ->
-                    for(i in res.indices) {
-                        list.add(i, IngredientsEntity.IngredientEntity(
-                            res[i].amount?.metric?.unit.toString(),
-                            res[i].amount?.metric?.value.orEmpty(),
-                            res[i].name.toString()
+                result?.let { ingredients ->
+                    ingredients.forEach { item ->
+                        list.add(IngredientsEntity.IngredientEntity(
+                            item.amount?.metric?.unit.toString(),
+                            item.amount?.metric?.value.orEmpty(),
+                            item.name.toString()
                         )
                         )
                     }
                 }
                 return IngredientsEntity(list)
             }
-        } ?: IngredientsEntity(null)
+        } ?: IngredientsEntity()
     }
 
     private fun Float?.orEmpty() =

@@ -21,7 +21,7 @@ class IngredientsAdapter: RecyclerView.Adapter<IngredientsAdapter.ItemIngredient
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemIngredientViewHolder {
         return ItemIngredientViewHolder(
-            _binding = ItemIngredientBinding.inflate(
+            binding = ItemIngredientBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -36,11 +36,11 @@ class IngredientsAdapter: RecyclerView.Adapter<IngredientsAdapter.ItemIngredient
     override fun getItemCount(): Int = items.size
 
     inner class ItemIngredientViewHolder(
-        private var _binding: ItemIngredientBinding
-    ) : RecyclerView.ViewHolder(_binding.root) {
+        private val binding: ItemIngredientBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindItem(item: IngredientModel) {
-            with(_binding) {
+            with(binding) {
                 tvNameIngredient.text = item.name
                 tvUnit.text = item.unit
                 tvValue.text = item.value.toString()

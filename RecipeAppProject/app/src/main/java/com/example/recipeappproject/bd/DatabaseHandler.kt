@@ -76,8 +76,8 @@ object DatabaseHandler {
             val result: List<FavoriteRecipeEntity>? = roomDatabase?.getFavoriteRecipeDao()?.getFavoriteRecipes(idUser)
             val list = mutableListOf<FavoriteRecipeModel>()
             result?.let { res ->
-                for (i in res.indices) {
-                    list.add(FavoriteRecipeMapper.mapFavoriteRecipeModel(res[i]))
+                res.forEach { item ->
+                    list.add(FavoriteRecipeMapper.mapFavoriteRecipeModel(item))
                 }
                 list
             }

@@ -12,11 +12,11 @@ data class DetailRecipeEntity (
     fun mapDetailRecipeEntity(): DetailRecipeDataModel {
         val listStep = mutableListOf<StepModel>()
         steps?.let { steps ->
-            for (i in steps.indices) {
+            steps.forEach { item ->
                 listStep.add(
                     StepModel(
-                        steps[i].number,
-                        steps[i].step
+                        item.number,
+                        item.step
                     )
                 )
             }

@@ -9,19 +9,24 @@ class RecipeResponseMapper {
         val list = mutableListOf<RecipesEntity.RecipeEntity>()
         return resp?.let { response ->
             with(response) {
-                result?.let { res ->
-                    for(i in res.indices) {
-                        list.add(i, RecipesEntity.RecipeEntity(
-                            res[i].id!!,
-                            res[i].title.toString(),
-                            res[i].image.toString(),
-                            res[i].imageType.toString()
-                        )
-                        )
+                result?.let { recipes ->
+                    recipes.forEach { item ->
+                        item.id?.let { id ->
+                            RecipesEntity.RecipeEntity(
+                                id,
+                                item.title.toString(),
+                                item.image.toString(),
+                                item.imageType.toString()
+                            )
+                        }?.let { recipeEntity ->
+                            list.add(
+                                recipeEntity
+                            )
+                        }
                     }
                 }
                 return RecipesEntity(list)
             }
-        } ?: RecipesEntity(null)
+        } ?: RecipesEntity()
     }
 }
